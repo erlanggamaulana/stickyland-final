@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StickyLand | Toko Alat Tulis Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #007bff; --secondary-purple: #9d4edd; --accent-glow: #00c4ff;
+            --dark-text: #1a202c; --light-bg: #f8f9fa; --success-color: #00c49a;
+            --danger-color: #ff4d4f; --border-radius-lg: 24px; --border-radius-md: 16px;
+        }
+        @keyframes aurora { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding-top: 80px; background-color: var(--light-bg); background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); background-size: 200% 200%; animation: aurora 15s ease infinite; color: var(--dark-text); }
+        .navbar { position: fixed; top: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 70px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+        .navbar-logo { font-size: 1.6em; font-weight: 800; color: var(--primary-blue); text-decoration: none; }
+        .nav-menu a { color: #333; text-decoration: none; font-weight: 500; padding: 10px 20px; border-radius: 12px; transition: all 0.3s ease; display: flex; align-items: center; }
+        .nav-menu a:hover { color: #fff; background: var(--primary-blue); }
+        .nav-menu a.active { color: #fff; background: linear-gradient(45deg, var(--primary-blue), var(--secondary-purple)); font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3); }
+        .cart-badge { margin-left: 8px; background-color: var(--danger-color); color: white; border-radius: 50%; padding: 3px 8px; font-size: 0.7em; font-weight: bold; }
+        .content-container { max-width: 1100px; margin: 40px auto; padding: 0 15px; }
+        .dashboard-page { display: none; padding: 50px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: var(--border-radius-lg); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
+        .dashboard-page.active { display: block; }
+        .section-title { text-align: center; font-size: 2.5em; font-weight: 700; color: var(--dark-text); margin-bottom: 3rem; }
+        #beranda-dashboard { text-align: center; }
+        #beranda-dashboard h1 { font-size: 3.5em; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
+        #beranda-dashboard p { font-size: 1.2em; color: #555; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto;}
+        .cta-button { display: inline-block; background: linear-gradient(45deg, var(--primary-blue), var(--secondary-purple)); color: white; padding: 18px 45px; border-radius: 50px; text-decoration: none; font-size: 1.1em; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 10px 25px rgba(0, 123, 255, 0.3); border: none; }
+        .cta-button:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(157, 78, 221, 0.4); }
+        .product-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; list-style: none; padding: 0; }
+        .product-card { background-color: #fff; border-radius: var(--border-radius-lg); padding: 25px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05); }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 12px 40px rgba(31, 38, 135, 0.12); }
+        .product-card h2 { margin-top: 0; font-size: 1.3em; color: var(--dark-text); font-weight: 600; }
+        .product-card .price { font-size: 1.5em; color: var(--primary-blue); margin: 15px 0; font-weight: 700; }
+        .product-card img { max-width: 100%; height: 120px; object-fit: contain; margin-bottom: 1.5rem; }
+        .add-to-cart-button { background-color: var(--dark-text); color: white; padding: 14px 20px; border-radius: var(--border-radius-md); border: none; cursor: pointer; width: 100%; font-size: 1em; font-weight: 600; transition: all 0.3s; }
+        .add-to-cart-button:hover { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-purple)); transform: scale(1.05); box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3); }
+        .add-to-cart-button.added { background: var(--success-color); transform: scale(1); cursor: default; }
+        .checkout-form-container { margin-top: 40px; }
+        input[type="text"], input[type="tel"], #ai-prompt { font-family: 'Poppins', sans-serif; font-size: 1em; width: 100%; padding: 15px; border: 2px solid #eef2f7; border-radius: var(--border-radius-md); box-sizing: border-box; transition: all 0.3s; background-color: rgba(255,255,255,0.8); }
+        input[type="text"]:focus, input[type="tel"]:focus, #ai-prompt:focus { border-color: var(--primary-blue); outline: none; box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15); }
+        .checkout-button, .ai-button { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-purple)); color: white; padding: 16px 25px; border-radius: var(--border-radius-md); width: 100%; font-size: 1.1em; font-weight: 600; transition: all 0.3s; box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3); border: none; cursor: pointer; }
+        #ai-recommender { margin: 40px 0; padding: 30px; border-radius: var(--border-radius-lg); background: rgba(255, 255, 255, 0.3); text-align: center; }
+        #ai-recommender h3 { margin-top: 0; font-size: 1.5em; }
+        #ai-prompt { min-height: 60px; resize: vertical; margin-bottom: 20px; }
+        .ai-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+        .ai-modal-content { background: #fff; padding: 30px; border-radius: var(--border-radius-lg); width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; position: relative; }
+        .ai-modal-close { position: absolute; top: 15px; right: 15px; background: #eee; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 1.2em; }
+        .ai-recommendation-list { list-style: none; padding: 0; }
+        .ai-recommendation-item { border-bottom: 1px solid #eee; padding: 15px 0; }
+        .ai-recommendation-item h4 { margin: 0 0 5px 0; }
+        .ai-recommendation-item p { margin: 0 0 10px 0; color: #555; font-size: 0.9em; }
+        .add-single-ai-item-btn { background-color: var(--dark-text); color: white; padding: 8px 15px; border-radius: 12px; border: none; cursor: pointer; font-size: 0.9em; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .nav-menu ul, .nav-menu { display: flex; list-style: none; padding: 0; margin: 0; }
+        .cart-items { list-style: none; padding: 0; margin-bottom: 20px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 15px 5px; }
+        .cart-total { text-align: right; font-size: 1.6em; font-weight: 700; margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; color: var(--primary-blue); }
+        label { display: block; margin-top: 15px; margin-bottom: 8px; font-weight: 600; font-size: 0.9em; }
+        .payment-options { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        .payment-option { display: flex; align-items: center; padding: 18px; border: 2px solid #eef2f7; border-radius: var(--border-radius-md); cursor: pointer; transition: all 0.3s ease; }
+        .payment-option:hover { border-color: var(--primary-blue); }
+        .payment-option img { height: 30px; width: auto; object-fit: contain; margin-right: 15px; }
+        .payment-option.selected { border-color: var(--primary-blue); background-color: rgba(0, 123, 255, 0.05); box-shadow: 0 5px 15px rgba(0, 123, 255, 0.1); }
+        .checkout-button:disabled { background: #95a5a6; cursor: not-allowed; }
+        .notification-popup { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: var(--success-color); color: white; padding: 15px 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); font-weight: 600; z-index: 1000; display: none; opacity: 0; transition: opacity 0.5s, transform 0.5s; }
+        @media (max-width: 600px) { .navbar { padding: 0 10px; } .nav-menu a { padding: 18px 10px; font-size: 0.9em; } .nav-menu a i { display: none; } .dashboard-page { padding: 20px 15px; } .product-list { grid-template-columns: 1fr; } #beranda-dashboard h1 { font-size: 2.5em; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="navbar-logo">StickyLand</a>
+        <ul class="nav-menu">
+            <li><a href="#" data-page="beranda-dashboard" class="nav-link active"><i class="fas fa-home"></i> Beranda</a></li>
+            <li><a href="#" data-page="produk-dashboard" class="nav-link"><i class="fas fa-boxes"></i> Produk</a></li>
+            <li><a href="#" data-page="cart-dashboard" class="nav-link"><i class="fas fa-shopping-cart"></i> Keranjang <span class="cart-badge" id="cart-count">0</span></a></li>
+        </ul>
+    </nav>
+
+    <div class="content-container">
+        <div id="beranda-dashboard" class="dashboard-page active">
+            <h2 class="section-title">Selamat Datang di StickyLand!</h2>
+            <h1>Platform Alat Tulis Sekolah Terbaik 🚀</h1>
+            <p>StickyLand hadir untuk memenuhi semua kebutuhan alat tulis Anda, mulai dari pensil, pulpen, hingga buku catatan, dengan proses yang cepat dan terpercaya.</p>
+            <a href="#" class="cta-button" onclick="changePage('produk-dashboard')">Telusuri Produk Kami <i class="fas fa-arrow-right"></i></a>
+            <div style="margin-top: 50px; font-size: 0.9em; color: #7f8c8d;"><p>Oleh: Kelompok 11 XII-J</p><p>Erlangga, Fayyaz, Haikal</p></div>
+        </div>
+
+        <div id="produk-dashboard" class="dashboard-page">
+            <h2 class="section-title">Semua Produk Alat Tulis</h2>
+            <input type="text" id="search-input" placeholder="Cari produk (contoh: pensil, buku)...">
+            <div id="ai-recommender">
+                <h3>Bingung Pilih Apa? Biar AI Bantu! ✨</h3>
+                <p>Tulis kebutuhan belajarmu di bawah ini, dan AI akan merekomendasikan paket yang pas untukmu.</p>
+                <textarea id="ai-prompt" placeholder="Contoh: Saya butuh paket untuk persiapan ujian akhir semester, fokus di matematika dan biologi."></textarea>
+                <button id="ai-generate-btn" class="ai-button">Buatkan Paket Belajar AI</button>
+            </div>
+            <ul class="product-list" id="all-products-list" style="margin-top: 30px;">
+                <li class="product-card" data-name="Paket Hemat Pelajar" data-price="25000"><img src="https://evermos.com/home/wp-content/uploads/2024/02/5953206d-dac4-422-b8db-18e3fe938a61.jpeg" alt="Paket Hemat" loading="lazy"><h2>Paket Hemat Pelajar</h2><p>Isi: 2 pensil, 1 pulpen, 1 penghapus, dan 1 buku catatan A5. Lebih hemat!</p><div class="price">Rp 25.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Pulpen Gel Warna Hitam" data-price="5000"><img src="https://down-id.img.susercontent.com/file/966bc4c634096592f12af11435ca0f4d" alt="Pulpen Gel" loading="lazy"><h2>Pulpen Gel Warna Hitam</h2><p>Tinta hitam pekat dan lancar, sangat cocok untuk mencatat cepat.</p><div class="price">Rp 5.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Buku Catatan Garis A5" data-price="12000"><img src="https://img.lazcdn.com/g/p/2dfe5c35e645db4a87a885a4587b8e08.jpg_960x960q80.jpg_.webp" alt="Buku Catatan" loading="lazy"><h2>Buku Catatan Garis A5</h2><p>Buku catatan ukuran A5 dengan sampul polos, isi 80 lembar.</p><div class="price">Rp 12.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Pensil Kayu HB" data-price="3000"><img src="https://down-id.img.susercontent.com/file/8fa9371998df918b0991e924bb694cd9" alt="Pensil Kayu HB" loading="lazy"><h2>Pensil Kayu HB</h2><p>Pensil kayu berkualitas tinggi untuk menulis dan menggambar.</p><div class="price">Rp 3.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Penghapus Karet" data-price="2000"><img src="https://img.id.my-best.com/product_images/95ac582cee1d472cd8731e104001efa9.png?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=73754fe19ffe5860d8eeb49d284e9628" alt="Penghapus Karet" loading="lazy"><h2>Penghapus Karet</h2><p>Penghapus lembut, tidak merusak kertas, dan bersih maksimal.</p><div class="price">Rp 2.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Paket Post-it Kecil" data-price="5000"><img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/MTA-14776092/3m_sticky_notes_post_it_3m_653_multicolour_-_1_pcs_-_full01_ztyojif.jpg" alt="Post-it Kecil" loading="lazy"><h2>Paket Post-it Kecil</h2><p>Tiga warna Post-it ukuran 5x5 cm untuk menandai halaman penting.</p><div class="price">Rp 5.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Stabilo Warna" data-price="3000"><img src="https://siopen.balangankab.go.id/storage/merchant/products/2024/06/26/4676b7b12b475858e74247d261b07bae.jpg" alt="Stabilo Warna" loading="lazy"><h2>Stabilo Warna</h2><p>Stabilo dengan ujung miring dan tinta cepat kering, pilihan warna cerah.</p><div class="price">Rp 3.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Penggaris 30cm" data-price="5000"><img src="https://img.lazcdn.com/g/p/aa0475ffa7d39d9b09eb1bca90f11fef.png_720x720q80.png" alt="Penggaris" loading="lazy"><h2>Penggaris 30cm</h2><p>Penggaris plastik bening panjang 30 cm, kuat dan akurat.</p><div class="price">Rp 5.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Tip Ex Cair" data-price="5000"><img src="https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSXjO_R3vk8ZtLdAmAaeaQohCgy4DL_eITgVmTiXLSP3VerXUtXUr5zLKEV0avhoMFpkCvT_LaWg8S7t0uBI-fZwEdr7emI2Q3lquTj3Sgdjbx8ZUS77soePg" alt="Tip Ex Cair" loading="lazy"><h2>Tip Ex Cair</h2><p>Koreksi tulisan dengan cepat dan bersih menggunakan tip ex cair berkualitas.</p><div class="price">Rp 5.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Tip Ex Kertas" data-price="10000"><img src="https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTtV_XO54eJ-_A5bb_Buj_DgzhE9l69sYS2z7hNPDJCQpraji_lLbD2y8pmZ2wYhV-LxIwEiSGv5EDQfWDXKmwo4ydeVv9sSGytGoevDHghRpPesbfVcb8L6A" alt="Tip Ex Kertas" loading="lazy"><h2>Tip Ex Kertas</h2><p>Koreksi tulisan dengan rapi dan kering seketika menggunakan tip ex model kertas.</p><div class="price">Rp 10.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+                <li class="product-card" data-name="Pensil Warna" data-price="15000"><img src="https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcRominFXJWmP5LKVpe1BF6IzzrM-OUaLkTgrUTcgOrXY0dodmAgAwRQyTfBX-qD7szPescY6ZN34Kw2HUbKKZVpovLUp7lUseXzPmnS6F9cDs_eqH0dnhTJBg" alt="Pensil Warna" loading="lazy"><h2>Pensil Warna</h2><p>Satu set pensil warna berkualitas untuk menggambar dan mewarnai.</p><div class="price">Rp 15.000</div><button class="add-to-cart-button">Tambah ke Keranjang</button></li>
+            </ul>
+        </div>
+    
+        <div id="cart-dashboard" class="dashboard-page">
+            <h2 class="section-title">Keranjang Belanja & Checkout</h2>
+            <div id="cart-section">
+                <h3>Daftar Item</h3>
+                <ul class="cart-items" id="cart-items"></ul>
+                <div id="empty-cart-message" style="text-align: center; padding: 30px; border: 1px dashed #ccc; border-radius: 8px; color: #7f8c8d; display: none;"><i class="fas fa-shopping-basket" style="font-size: 2em; margin-bottom: 10px;"></i><p>Keranjang Anda kosong. Yuk, belanja sekarang!</p></div>
+                <div class="cart-total">Total Belanja: <span id="cart-total-price">Rp 0</span></div>
+            </div>
+            <div class="checkout-form-container">
+                <form id="checkout-form">
+                    <h3>Informasi Pembeli</h3>
+                    <label for="name">Nama Lengkap:</label><input type="text" id="name" name="name" required placeholder="Nama Anda">
+                    <label for="class">Kelas:</label><input type="text" id="class" name="class" required placeholder="Contoh: XII-J">
+                    <label for="phone">Nomor HP (WhatsApp):</label><input type="tel" id="phone" name="phone" required placeholder="Contoh: 081234567890">
+                    <h3>Pilih Metode Pembayaran</h3>
+                    <div class="payment-options">
+                        <div class="payment-option selected" data-method="whatsapp"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png" alt="WhatsApp Icon"><span>Bayar di Tempat (COD) via WhatsApp</span></div>
+                        <div class="payment-option" data-method="dana"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/DANA_Logo.png/1200px-DANA_Logo.png" alt="DANA Icon"><span>Transfer via DANA</span></div>
+                        <div class="payment-option" data-method="bank"><i class="fas fa-university" style="font-size: 2em; color: var(--primary-blue);"></i><span>Transfer Bank (BCA/Mandiri)</span></div>
+                    </div>
+                    <button type="submit" class="checkout-button"><i class="fab fa-whatsapp"></i> Pesan & Bayar COD via WhatsApp</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+        <div id="ai-modal-overlay" class="ai-modal-overlay">
+            <div class="ai-modal-content">
+                <button id="ai-modal-close-btn" class="ai-modal-close">&times;</button>
+                <h3 id="ai-modal-title">Paket Belajar Rekomendasi AI</h3>
+                <div id="ai-modal-body"></div>
+                <div id="ai-modal-footer" style="margin-top: 20px;"><button id="add-all-ai-to-cart-btn" class="cta-button">Tambah Semua ke Keranjang</button></div>
+            </div>
+        </div>
+    
+        <div id="notification-popup" class="notification-popup"></div>
+        <footer><p style="text-align: center; padding: 20px; font-size: 0.9em; color: #555;">&copy; 2025 StickyLand | Toko Alat Tulis Digital</p></footer>
+    
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+                const ADMIN_WA_NUMBER = '6281398708029';
+                let selectedPaymentMethod = 'whatsapp';
+                const productList = document.getElementById('all-products-list');
+                const cartItemsList = document.getElementById('cart-items');
+                const cartCount = document.getElementById('cart-count');
+                const cartTotalDisplay = document.getElementById('cart-total-price');
+                const checkoutForm = document.getElementById('checkout-form');
+                const searchInput = document.getElementById('search-input');
+                const notificationPopup = document.getElementById('notification-popup');
+                const paymentOptionsContainer = document.querySelector('.payment-options');
+                const emptyCartMessage = document.getElementById('empty-cart-message');
+                const navLinks = document.querySelectorAll('.nav-link');
+                const aiGenerateBtn = document.getElementById('ai-generate-btn');
+                const aiPrompt = document.getElementById('ai-prompt');
+                const aiModalOverlay = document.getElementById('ai-modal-overlay');
+                const aiModalCloseBtn = document.getElementById('ai-modal-close-btn');
+                const aiModalBody = document.getElementById('ai-modal-body');
+                const addAllAiToCartBtn = document.getElementById('add-all-ai-to-cart-btn');
+
+                function changePage(targetPageId) {
+                    document.querySelectorAll('.dashboard-page').forEach(page => page.classList.remove('active'));
+                    const newPage = document.getElementById(targetPageId);
+                    if (newPage) newPage.classList.add('active');
+                    navLinks.forEach(link => { link.classList.remove('active'); if (link.getAttribute('data-page') === targetPageId) { link.classList.add('active'); } });
+                    if (targetPageId === 'cart-dashboard') { updateCart(); updateCheckoutButtonText(); }
+                }
+
+                function showNotification(message, isSuccess = true) {
+                    notificationPopup.textContent = message;
+                    notificationPopup.style.backgroundColor = isSuccess ? 'var(--success-color)' : 'var(--danger-color)';
+                    notificationPopup.style.display = 'block';
+                    setTimeout(() => { notificationPopup.style.opacity = 1; notificationPopup.style.transform = 'translate(-50%, 0)'; }, 10);
+                    setTimeout(() => { notificationPopup.style.opacity = 0; notificationPopup.style.transform = 'translate(-50%, 50px)'; setTimeout(() => { notificationPopup.style.display = 'none'; }, 500); }, 2500);
+                }
+
+                function calculateTotal() { return cart.reduce((sum, item) => sum + item.price * item.quantity, 0); }
+
+                function updateCheckoutButtonText() {
+                    if (!checkoutForm) return;
+                    const checkoutButton = checkoutForm.querySelector('.checkout-button');
+                    if (selectedPaymentMethod === 'whatsapp') { checkoutButton.innerHTML = '<i class="fab fa-whatsapp"></i> Pesan & Bayar COD via WhatsApp'; }
+                    else if (selectedPaymentMethod === 'dana') { checkoutButton.innerHTML = '<i class="fas fa-wallet"></i> Pesan & Transfer DANA via WhatsApp'; }
+                    else if (selectedPaymentMethod === 'bank') { checkoutButton.innerHTML = '<i class="fas fa-university"></i> Pesan & Transfer Bank via WhatsApp'; }
+                }
+
+                function updateCart() {
+                    if (!cartItemsList) return;
+                    cartItemsList.innerHTML = '';
+                    const total = calculateTotal();
+                    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                    if (cart.length === 0) {
+                        if(emptyCartMessage) emptyCartMessage.style.display = 'block';
+                        if (checkoutForm) checkoutForm.querySelector('.checkout-button').disabled = true;
+                    } else {
+                        if(emptyCartMessage) emptyCartMessage.style.display = 'none';
+                        if (checkoutForm) checkoutForm.querySelector('.checkout-button').disabled = false;
+                        cart.forEach((item, index) => {
+                            const li = document.createElement('li');
+                            li.classList.add('cart-item');
+                            li.innerHTML = `<div class="item-details" style="flex-grow: 1;"><span class="item-name" style="font-weight: 500;">${item.name}</span><span class="item-price" style="display: block; font-size: 0.9em; color: #777;">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span></div><div class="quantity-controls" style="display: flex; align-items: center; gap: 10px;"><button class="decrease-qty" data-index="${index}" style="background:#f1f1f1; border:none; color: #555; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 1.2em;">-</button><span style="font-weight: 600; min-width: 20px; text-align: center;">${item.quantity}</span><button class="increase-qty" data-index="${index}" style="background:#f1f1f1; border:none; color: #555; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 1.2em;">+</button><button class="remove-item" data-index="${index}" style="background:none; border:none; color: var(--danger-color); font-size: 1.1em; cursor: pointer; margin-left: 10px;"><i class="fas fa-trash-alt"></i></button></div>`;
+                            cartItemsList.appendChild(li);
+                        });
+                    }
+                    if(cartTotalDisplay) cartTotalDisplay.textContent = `Rp ${total.toLocaleString('id-ID')}`;
+                    if(cartCount) cartCount.textContent = totalItems;
+                    localStorage.setItem('cartItems', JSON.stringify(cart));
+                }
+
+                function handleProductAddition(productName, productPrice, button) {
+                    const existingItem = cart.find(item => item.name === productName);
+                    if (existingItem) { existingItem.quantity++; } else { cart.push({ name: productName, price: productPrice, quantity: 1 }); }
+                    updateCart();
+                    showNotification(`✅ ${productName} ditambahkan!`);
+                    if (button && !button.classList.contains('add-single-ai-item-btn')) {
+                        button.classList.add('added');
+                        button.innerHTML = '<i class="fas fa-check"></i> Ditambahkan';
+                        setTimeout(() => { button.classList.remove('added'); button.innerHTML = 'Tambah ke Keranjang'; }, 1500);
+                    }
+                }
+
+                async function getAiRecommendations(userPrompt, productCatalog) {
+                    const apiUrl = '/api/recommend';
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userPrompt, productCatalog })
+                        });
+                        if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                        const result = await response.json();
+                        try { return JSON.parse(result.recommendationsText); } 
+                        catch { return manualParseRecommendations(result.recommendationsText); }
+                    } catch (error) {
+                        console.error("Failed to fetch from backend API:", error);
+                        return null;
+                    }
+                }
+
+                function manualParseRecommendations(text) {
+                    try {
+                        const recommendations = [];
+                        const regex = /"productName":\s*"([^"]+)",\s*"reason":\s*"([^"]+)"/g;
+                        let match;
+                        while ((match = regex.exec(text)) !== null) {
+                            recommendations.push({ productName: match[1], reason: match[2] });
+                        }
+                        return recommendations.length > 0 ? { recommendations } : null;
+                    } catch(e) { console.error("Manual parsing failed:", e); return null; }
+                }
+
+                function displayAiResults(recommendations) {
+                    aiModalBody.innerHTML = '';
+                    const list = document.createElement('ul');
+                    list.className = 'ai-recommendation-list';
+                    recommendations.forEach(item => {
+                        const productCard = findProductCardByName(item.productName);
+                        if (!productCard) return;
+                        const li = document.createElement('li');
+                        li.className = 'ai-recommendation-item';
+                        li.innerHTML = `<h4>${item.productName}</h4><p><em>Alasan AI:</em> ${item.reason}</p><button class="add-single-ai-item-btn" data-name="${item.productName}">+ Tambah</button>`;
+                        list.appendChild(li);
+                    });
+                    aiModalBody.appendChild(list);
+                    addAllAiToCartBtn.dataset.recommendations = JSON.stringify(recommendations.map(r => r.productName));
+                }
+
+                function findProductCardByName(name) { return Array.from(document.querySelectorAll('.product-card')).find(card => card.dataset.name === name); }
+                function closeAiModal() { aiModalOverlay.style.opacity = '0'; setTimeout(() => { aiModalOverlay.style.display = 'none'; }, 300); }
+
+                navLinks.forEach(link => { link.addEventListener('click', e => { e.preventDefault(); changePage(e.currentTarget.getAttribute('data-page')); }); });
+                searchInput.addEventListener('input', e => { const query = e.target.value.toLowerCase().trim(); document.querySelectorAll('.product-card').forEach(card => { const productName = card.querySelector('h2').textContent.toLowerCase(); const productDesc = card.querySelector('p').textContent.toLowerCase(); card.style.display = (productName.includes(query) || productDesc.includes(query)) ? 'block' : 'none'; }); });
+                productList.addEventListener('click', e => { const button = e.target.closest('.add-to-cart-button'); if (button && !button.classList.contains('added')) { const productCard = button.closest('.product-card'); const productName = productCard.dataset.name; const productPrice = parseFloat(productCard.dataset.price); handleProductAddition(productName, productPrice, button); } });
+                if (cartItemsList) { cartItemsList.addEventListener('click', e => { const button = e.target.closest('button'); if (!button) return; const index = button.dataset.index; if (button.classList.contains('increase-qty')) cart[index].quantity++; else if (button.classList.contains('decrease-qty')) { if (cart[index].quantity > 1) cart[index].quantity--; else cart.splice(index, 1); } else if (button.classList.contains('remove-item')) cart.splice(index, 1); updateCart(); }); }
+                if (checkoutForm) { checkoutForm.addEventListener('submit', e => { e.preventDefault(); if (cart.length === 0) return showNotification('Keranjang kosong, tidak bisa checkout.', false); const name = document.getElementById('name').value.trim(); const studentClass = document.getElementById('class').value.trim(); const phone = document.getElementById('phone').value.trim(); if (!name || !studentClass || !phone) return showNotification('Mohon lengkapi informasi pembeli (Nama, Kelas, HP).', false); const total = calculateTotal(); const orderItemsFormatted = cart.map(item => `* ${item.name} (${item.quantity}x) - Rp ${item.price.toLocaleString('id-ID')}`).join('\n'); let paymentDetail = ''; if (selectedPaymentMethod === 'whatsapp') paymentDetail = `*Metode:* COD (Bayar di Tempat).\nMohon konfirmasi pengambilan/pengantaran.`; else if (selectedPaymentMethod === 'dana') paymentDetail = `*Metode:* Transfer DANA.\nMohon tunggu nomor DANA dari admin.`; else if (selectedPaymentMethod === 'bank') paymentDetail = `*Metode:* Transfer Bank.\nMohon tunggu detail rekening dari admin.`; let whatsappMessage = `*STICKYLAND ORDER BARU*\n\nDari: ${name}\nKelas: ${studentClass}\nNo. HP: ${phone}\n\n*Rincian Pesanan:*\n${orderItemsFormatted}\n\n*TOTAL BELANJA: Rp ${total.toLocaleString('id-ID')}*\n\n${paymentDetail}`; const whatsappUrl = `https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`; window.open(whatsappUrl, '_blank'); showNotification(`Pemesanan berhasil! Silakan lanjutkan di WhatsApp.`, true); cart.length = 0; updateCart(); checkoutForm.reset(); changePage('beranda-dashboard'); }); }
+                if (paymentOptionsContainer) { paymentOptionsContainer.addEventListener('click', e => { const option = e.target.closest('.payment-option'); if (!option) return; document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected')); option.classList.add('selected'); selectedPaymentMethod = option.dataset.method; updateCheckoutButtonText(); }); }
+                aiGenerateBtn.addEventListener('click', async () => { const userPrompt = aiPrompt.value.trim(); if (!userPrompt) return showNotification("Harap isi dulu kebutuhan belajarmu!", false); aiModalBody.innerHTML = '<div class="loader"></div><p style="text-align:center;">AI sedang meracik paket terbaik untukmu...</p>'; aiModalOverlay.style.display = 'flex'; setTimeout(() => aiModalOverlay.style.opacity = '1', 10); const productCatalog = Array.from(document.querySelectorAll('.product-card')).map(card => `${card.dataset.name} - ${card.querySelector('p').textContent.trim()}`).join('; '); const result = await getAiRecommendations(userPrompt, productCatalog); if (result && result.recommendations) { displayAiResults(result.recommendations); } else { aiModalBody.innerHTML = '<p style="text-align:center; color: var(--danger-color);">Maaf, terjadi kesalahan saat menghubungi AI. Coba lagi nanti.</p>'; } });
+                aiModalBody.addEventListener('click', e => { if (e.target.classList.contains('add-single-ai-item-btn')) { const productName = e.target.dataset.name; const productCard = findProductCardByName(productName); if (productCard) { const price = parseFloat(productCard.dataset.price); handleProductAddition(productName, price, e.target); e.target.textContent = 'Ditambahkan ✔️'; e.target.disabled = true; } } });
+                addAllAiToCartBtn.addEventListener('click', () => { const productNames = JSON.parse(addAllAiToCartBtn.dataset.recommendations || '[]'); productNames.forEach(name => { const productCard = findProductCardByName(name); if (productCard) { const price = parseFloat(productCard.dataset.price); handleProductAddition(name, price, null); } }); showNotification('Semua item rekomendasi berhasil ditambahkan!', true); closeAiModal(); });
+                aiModalCloseBtn.addEventListener('click', closeAiModal);
+                aiModalOverlay.addEventListener('click', e => { if (e.target === aiModalOverlay) closeAiModal(); });
+
+                updateCart();
+                updateCheckoutButtonText();
+                changePage('beranda-dashboard');
+            });
+        </script>
+    </body>
+    </html>
+
+
